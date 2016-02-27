@@ -18,6 +18,8 @@
  */
 package org.apache.cxf.dosgi.dsw.handlers;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.HashMap;
@@ -186,7 +188,7 @@ public abstract class AbstractPojoConfigurationTypeHandler implements Configurat
         String address = getClientAddress(sd);
         return address == null ? httpServiceManager.getDefaultAddress(iClass) : address;
     }
-    
+
     public String getServletContextRoot(Map<String, Object> sd) {
         return OsgiUtils.getFirstNonEmptyStringProperty(sd,
                 Constants.WS_HTTP_SERVICE_CONTEXT,
@@ -195,7 +197,7 @@ public abstract class AbstractPojoConfigurationTypeHandler implements Configurat
                 Constants.RS_HTTP_SERVICE_CONTEXT);
     }
 
-    
+
     protected Bus createBus(ServiceReference<?> sref, BundleContext callingContext, String contextRoot) {
         Bus bus = BusFactory.newInstance().createBus();
         if (contextRoot != null) {
@@ -209,7 +211,7 @@ public abstract class AbstractPojoConfigurationTypeHandler implements Configurat
         try {
             Thread.currentThread().setContextClassLoader(ServerFactoryBean.class.getClassLoader());
             Server server = factory.create();
-            return new ExportResult(endpointProps, server);
+            return new ExportResult(endpointProps, wrapServer(server));
         } catch (Exception e) {
             return new ExportResult(endpointProps, e);
         } finally {
@@ -272,5 +274,15 @@ public abstract class AbstractPojoConfigurationTypeHandler implements Configurat
         if (props != null) {
             factory.getProperties(true).putAll(props);
         }
+    }
+
+    protected static Closeable wrapServer(final Server server) {
+        return new Closeable() {
+
+            @Override
+            public void close() throws IOException {
+                server.destroy();
+            }
+        };
     }
 }

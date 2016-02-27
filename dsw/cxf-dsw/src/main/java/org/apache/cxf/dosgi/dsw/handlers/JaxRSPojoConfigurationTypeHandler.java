@@ -146,7 +146,7 @@ public class JaxRSPojoConfigurationTypeHandler extends AbstractPojoConfiguration
         try {
             Thread.currentThread().setContextClassLoader(JAXRSServerFactoryBean.class.getClassLoader());
             Server server = factory.create();
-            return new ExportResult(endpointProps, server);
+            return new ExportResult(endpointProps, wrapServer(server));
         } catch (Exception e) {
             return new ExportResult(endpointProps, e);
         } finally {

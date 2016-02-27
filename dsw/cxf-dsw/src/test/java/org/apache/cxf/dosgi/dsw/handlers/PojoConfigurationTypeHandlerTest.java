@@ -18,6 +18,7 @@
  */
 package org.apache.cxf.dosgi.dsw.handlers;
 
+import java.io.Closeable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -226,7 +227,7 @@ public class PojoConfigurationTypeHandlerTest extends TestCase {
             @Override
             protected ExportResult createServerFromFactory(ServerFactoryBean factory,
                                                            Map<String, Object> endpointProps) {
-                return new ExportResult(endpointProps, (Server) null);
+                return new ExportResult(endpointProps, (Closeable) null);
             }
         };
 
@@ -374,7 +375,7 @@ public class PojoConfigurationTypeHandlerTest extends TestCase {
         ExportResult exportResult = handler.createServer(sref, dswBC, null, sd, MyJaxWsEchoService.class, serviceBean);
         c.verify();
 
-        Server server = exportResult.getServer();
+        Server server = (Server) exportResult.getServer();
         Endpoint ep = server.getEndpoint();
         QName bindingName = ep.getEndpointInfo().getBinding().getName();
         Assert.assertEquals(JaxWsEndpointImpl.class, ep.getClass());
@@ -396,7 +397,7 @@ public class PojoConfigurationTypeHandlerTest extends TestCase {
 
         c.replay();
         ExportResult exportResult = handler.createServer(sref, dswBC, null, sd, MySimpleEchoService.class, serviceBean);
-        Server server = exportResult.getServer();
+        Server server = (Server) exportResult.getServer();
         c.verify();
 
         Endpoint ep = server.getEndpoint();

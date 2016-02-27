@@ -18,17 +18,16 @@
  */
 package org.apache.cxf.dosgi.dsw.handlers;
 
+import java.io.Closeable;
 import java.util.Map;
-
-import org.apache.cxf.endpoint.Server;
 
 public class ExportResult {
 
     private final Map<String, Object> endpointProps;
-    private final Server server;
+    private final Closeable server;
     private final Exception exception;
 
-    public ExportResult(Map<String, Object> endpointProps, Server server) {
+    public ExportResult(Map<String, Object> endpointProps, Closeable server) {
         this.endpointProps = endpointProps;
         this.server = server;
         this.exception = null;
@@ -44,7 +43,7 @@ public class ExportResult {
         return endpointProps;
     }
 
-    public Server getServer() {
+    public Closeable getServer() {
         return server;
     }
 

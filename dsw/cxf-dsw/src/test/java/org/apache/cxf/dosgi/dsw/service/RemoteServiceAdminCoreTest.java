@@ -18,6 +18,7 @@
  */
 package org.apache.cxf.dosgi.dsw.service;
 
+import java.io.Closeable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +36,6 @@ import org.apache.cxf.dosgi.dsw.qos.DefaultIntentMapFactory;
 import org.apache.cxf.dosgi.dsw.qos.IntentManager;
 import org.apache.cxf.dosgi.dsw.qos.IntentManagerImpl;
 import org.apache.cxf.dosgi.dsw.qos.IntentMap;
-import org.apache.cxf.endpoint.Server;
 import org.easymock.IAnswer;
 import org.easymock.IMocksControl;
 import org.easymock.classextension.EasyMock;
@@ -207,7 +207,7 @@ public class RemoteServiceAdminCoreTest {
         Map<String, Object> eProps = new HashMap<String, Object>(sProps);
         eProps.put("endpoint.id", "http://something");
         eProps.put("service.imported.configs", new String[] {"org.apache.cxf.ws"});
-        ExportResult er = new ExportResult(eProps, (Server) null);
+        ExportResult er = new ExportResult(eProps, (Closeable) null);
 
         ConfigurationTypeHandler handler = EasyMock.createNiceMock(ConfigurationTypeHandler.class);
         EasyMock.expect(handler.createServer(sref,
