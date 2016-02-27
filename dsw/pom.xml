@@ -42,5 +42,6 @@
       <module>cxf-dsw</module>
       <module>cxf-topology-manager</module>
       <module>cxf-distribution-providers</module>
+      <module>fabric-dosgi</module>
     </modules>
 </project>
