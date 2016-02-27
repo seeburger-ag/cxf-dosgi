@@ -43,6 +43,7 @@ public class IntentTrackerTest {
     public void testIntentAsService() throws InvalidSyntaxException {
         IMocksControl c = EasyMock.createControl();
         BundleContext bc = c.createMock(BundleContext.class);
+        expect(bc.getProperty("org.osgi.framework.version")).andReturn("4.2.0").anyTimes();
         Filter filter = c.createMock(Filter.class);
         expect(bc.createFilter(EasyMock.<String>anyObject())).andReturn(filter);
         final Capture<ServiceListener> capturedListener = new Capture<ServiceListener>();

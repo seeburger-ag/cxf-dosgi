@@ -29,18 +29,18 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConfigTypeHandlerTracker extends ServiceTracker<ConfigurationTypeHandler, ConfigurationTypeHandler> {
+public class ConfigTypeHandlerTracker extends ServiceTracker {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationTypeHandler.class);
     private Map<String, ConfigurationTypeHandler> handlers = new ConcurrentHashMap<String, ConfigurationTypeHandler>();
 
     public ConfigTypeHandlerTracker(BundleContext context) {
-        super(context, ConfigurationTypeHandler.class, null);
+        super(context, ConfigurationTypeHandler.class.getName(), null);
     }
 
     @Override
-    public ConfigurationTypeHandler addingService(ServiceReference<ConfigurationTypeHandler> reference) {
-        ConfigurationTypeHandler service = super.addingService(reference);
+    public ConfigurationTypeHandler addingService(ServiceReference reference) {
+        ConfigurationTypeHandler service = (ConfigurationTypeHandler) super.addingService(reference);
         if (service == null) {
             return null;
         }
@@ -56,11 +56,14 @@ public class ConfigTypeHandlerTracker extends ServiceTracker<ConfigurationTypeHa
     }
 
     @Override
-    public void removedService(ServiceReference<ConfigurationTypeHandler> reference, ConfigurationTypeHandler service) {
-        String[] configTypes = service.getSupportedTypes();
-        for (String type : configTypes) {
-            LOG.info("Removing configuration type {} provided by {}", type, service);
-            handlers.remove(type);
+    public void removedService(ServiceReference reference, Object service) {
+        if (service instanceof ConfigurationTypeHandler) {
+            ConfigurationTypeHandler handler = (ConfigurationTypeHandler) service;
+            String[] configTypes = handler.getSupportedTypes();
+            for (String type : configTypes) {
+                LOG.info("Removing configuration type {} provided by {}", type, service);
+                handlers.remove(type);
+            }
         }
         super.removedService(reference, service);
     }

@@ -49,9 +49,9 @@ import static org.junit.Assert.assertFalse;
 
 public class SimpleServiceTrackerTest {
 
-    private ServiceReference<RemoteServiceAdmin> createUserServiceBundle(IMocksControl c, BundleContext context) {
+    private ServiceReference createUserServiceBundle(IMocksControl c, BundleContext context) {
         @SuppressWarnings("unchecked")
-        final ServiceReference<RemoteServiceAdmin> sref = c.createMock(ServiceReference.class);
+        final ServiceReference sref = c.createMock(ServiceReference.class);
         Bundle srefBundle = c.createMock(Bundle.class);
         expect(srefBundle.getBundleContext()).andReturn(context).anyTimes();
         expect(sref.getBundle()).andReturn(srefBundle).anyTimes();
@@ -62,7 +62,7 @@ public class SimpleServiceTrackerTest {
     private static <T> void assertEqualsUnordered(Collection<T> c1, Collection<T> c2) {
         assertEquals(new HashSet<T>(c1), new HashSet<T>(c2));
     }
-    
+
     @Test
     public void testTracker() throws InvalidSyntaxException {
         IMocksControl c = org.easymock.classextension.EasyMock.createControl();
@@ -80,17 +80,17 @@ public class SimpleServiceTrackerTest {
                 .andReturn(filter).atLeastOnce();
         // support context.getServiceReferences based on our list
         final List<RemoteServiceAdmin> services = new ArrayList<RemoteServiceAdmin>();
-        final List<ServiceReference<RemoteServiceAdmin>> srefs = new ArrayList<ServiceReference<RemoteServiceAdmin>>();
+        final List<ServiceReference> srefs = new ArrayList<ServiceReference>();
         expect(context.getServiceReferences((String)anyObject(), eq((String)null))).andAnswer(
-                new IAnswer<ServiceReference<?>[]>() {
+                new IAnswer<ServiceReference[]>() {
                 @Override
-                public ServiceReference<?>[] answer() {
+                public ServiceReference[] answer() {
                     return srefs.toArray(new ServiceReference[srefs.size()]);
                 }
             });
         // create services
-        ServiceReference<RemoteServiceAdmin> sref1 = createUserServiceBundle(c, context);
-        ServiceReference<RemoteServiceAdmin> sref2 = createUserServiceBundle(c, context);
+        ServiceReference sref1 = createUserServiceBundle(c, context);
+        ServiceReference sref2 = createUserServiceBundle(c, context);
         RemoteServiceAdmin service1 = c.createMock(RemoteServiceAdmin.class);
         RemoteServiceAdmin service2 = c.createMock(RemoteServiceAdmin.class);
         expect(context.getService(sref1)).andReturn(service1).atLeastOnce();
@@ -110,7 +110,7 @@ public class SimpleServiceTrackerTest {
                 new SimpleServiceTrackerListener<RemoteServiceAdmin>() {
                 @SuppressWarnings({ "unchecked", "rawtypes" })
                 @Override
-                public void added(ServiceReference<RemoteServiceAdmin> reference, RemoteServiceAdmin service) {
+                public void added(ServiceReference reference, RemoteServiceAdmin service) {
                     // prove that original ServiceTracker fails here
                     Object[] trackerServices = (Object[])
                         (tracker.getServices() != null ? tracker.getServices() : new Object[0]);
@@ -121,11 +121,11 @@ public class SimpleServiceTrackerTest {
                 }
 
                 @Override
-                public void modified(ServiceReference<RemoteServiceAdmin> reference, RemoteServiceAdmin service) {
+                public void modified(ServiceReference reference, RemoteServiceAdmin service) {
                 }
 
                 @Override
-                public void removed(ServiceReference<RemoteServiceAdmin> reference, RemoteServiceAdmin service) {
+                public void removed(ServiceReference reference, RemoteServiceAdmin service) {
                     assertEqualsUnordered(services, tracker.getAllServices());
                 }
             };

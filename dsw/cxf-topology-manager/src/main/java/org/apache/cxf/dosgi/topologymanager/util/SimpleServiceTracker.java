@@ -48,10 +48,10 @@ import org.osgi.util.tracker.ServiceTracker;
  *
  * @param <T> the service interface type
  */
-public class SimpleServiceTracker<T> extends ServiceTracker<T, T> {
+public class SimpleServiceTracker<T> extends ServiceTracker {
 
     // we must use a map with references as keys, so as not to invoke equals remotely on service objects
-    private final ConcurrentMap<ServiceReference<T>, T> services = new ConcurrentHashMap<ServiceReference<T>, T>();
+    private final ConcurrentMap<ServiceReference, T> services = new ConcurrentHashMap<ServiceReference, T>();
     private final List<SimpleServiceTrackerListener<T>> listeners =
         new CopyOnWriteArrayList<SimpleServiceTrackerListener<T>>();
 
@@ -91,8 +91,8 @@ public class SimpleServiceTracker<T> extends ServiceTracker<T, T> {
     }
 
     @Override
-    public T addingService(ServiceReference<T> reference) {
-        T service = super.addingService(reference);
+    public T addingService(ServiceReference reference) {
+        T service = (T)super.addingService(reference);
         services.put(reference, service);
         for (SimpleServiceTrackerListener<T> listener : listeners) {
             listener.added(reference, service);
@@ -101,18 +101,18 @@ public class SimpleServiceTracker<T> extends ServiceTracker<T, T> {
     }
 
     @Override
-    public void modifiedService(ServiceReference<T> reference, T service) {
+    public void modifiedService(ServiceReference reference, Object service) {
         for (SimpleServiceTrackerListener<T> listener : listeners) {
-            listener.modified(reference, service);
+            listener.modified(reference, (T)service);
         }
         super.modifiedService(reference, service);
     }
 
     @Override
-    public void removedService(ServiceReference<T> reference, T service) {
+    public void removedService(ServiceReference reference, Object service) {
         services.remove(reference, service);
         for (SimpleServiceTrackerListener<T> listener : listeners) {
-            listener.removed(reference, service);
+            listener.removed(reference, (T)service);
         }
         super.removedService(reference, service);
     }
@@ -145,7 +145,7 @@ public class SimpleServiceTracker<T> extends ServiceTracker<T, T> {
      *
      * @return all currently tracked service references
      */
-    public List<ServiceReference<T>> getAllServiceReferences() {
-        return new ArrayList<ServiceReference<T>>(services.keySet());
+    public List<ServiceReference> getAllServiceReferences() {
+        return new ArrayList<ServiceReference>(services.keySet());
     }
 }

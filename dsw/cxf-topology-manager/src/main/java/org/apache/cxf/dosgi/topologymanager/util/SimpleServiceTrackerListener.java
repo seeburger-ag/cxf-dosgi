@@ -34,7 +34,7 @@ public interface SimpleServiceTrackerListener<T> {
      * @param reference the newly added service reference
      * @param service the newly added service
      */
-    void added(ServiceReference<T> reference, T service);
+    void added(ServiceReference reference, T service);
 
     /**
      * Called when a tracked service is modified.
@@ -42,7 +42,7 @@ public interface SimpleServiceTrackerListener<T> {
      * @param reference the modified service reference
      * @param service the modified service
      */
-    void modified(ServiceReference<T> reference, T service);
+    void modified(ServiceReference reference, T service);
 
     /**
      * Called when a service is removed from the tracked services.
@@ -50,5 +50,5 @@ public interface SimpleServiceTrackerListener<T> {
      * @param reference the removed service reference
      * @param service the removed service
      */
-    void removed(ServiceReference<T> reference, T service);
+    void removed(ServiceReference reference, T service);
 }
