@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 public class ConfigTypeHandlerTracker extends ServiceTracker<ConfigurationTypeHandler, ConfigurationTypeHandler> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PojoConfigurationTypeHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationTypeHandler.class);
     private Map<String, ConfigurationTypeHandler> handlers = new ConcurrentHashMap<String, ConfigurationTypeHandler>();
 
     public ConfigTypeHandlerTracker(BundleContext context) {

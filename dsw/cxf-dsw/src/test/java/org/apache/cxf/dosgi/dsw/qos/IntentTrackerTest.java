@@ -18,10 +18,7 @@
  */
 package org.apache.cxf.dosgi.dsw.qos;
 
-import junit.framework.Assert;
-
 import org.apache.cxf.dosgi.dsw.Constants;
-import org.apache.cxf.feature.AbstractFeature;
 import org.easymock.Capture;
 import org.easymock.classextension.EasyMock;
 import org.easymock.classextension.IMocksControl;
@@ -34,6 +31,9 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class IntentTrackerTest {
 
@@ -53,11 +53,10 @@ public class IntentTrackerTest {
         IntentMap intentMap = new IntentMap();
 
         // Create a custom intent
-        @SuppressWarnings("unchecked")
-        ServiceReference<AbstractFeature> reference = c.createMock(ServiceReference.class);
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        ServiceReference reference = c.createMock(ServiceReference.class);
         expect(reference.getProperty(Constants.INTENT_NAME_PROP)).andReturn(MY_INTENT_NAME);
-        AbstractFeature testIntent = new AbstractFeature() {
-        };
+        Object testIntent = new Object();
         expect(bc.getService(reference)).andReturn(testIntent).atLeastOnce();
 
         c.replay();
@@ -65,7 +64,7 @@ public class IntentTrackerTest {
         IntentTracker tracker = new IntentTracker(bc, intentMap);
         tracker.open();
 
-        Assert.assertFalse("IntentMap should not contain " + MY_INTENT_NAME, intentMap.containsKey(MY_INTENT_NAME));
+        assertFalse("IntentMap should not contain " + MY_INTENT_NAME, intentMap.containsKey(MY_INTENT_NAME));
         ServiceListener listener = capturedListener.getValue();
 
         // Simulate adding custom intent service
@@ -73,8 +72,8 @@ public class IntentTrackerTest {
         listener.serviceChanged(event);
 
         // our custom intent should now be available
-        Assert.assertTrue("IntentMap should contain " + MY_INTENT_NAME, intentMap.containsKey(MY_INTENT_NAME));
-        Assert.assertEquals(testIntent, intentMap.get(MY_INTENT_NAME));
+        assertTrue("IntentMap should contain " + MY_INTENT_NAME, intentMap.containsKey(MY_INTENT_NAME));
+        assertEquals(testIntent, intentMap.get(MY_INTENT_NAME));
 
         c.verify();
     }

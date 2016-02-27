@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.cxf.dosgi.dsw.handlers;
+package org.apache.cxf.dosgi.distribution.handler;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.cxf.dosgi.distribution.handler.ServiceInvocationHandler;
 
 import junit.framework.TestCase;
 

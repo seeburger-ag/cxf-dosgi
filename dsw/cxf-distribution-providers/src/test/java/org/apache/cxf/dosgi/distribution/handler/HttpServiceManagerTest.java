@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.cxf.dosgi.dsw.handlers;
+package org.apache.cxf.dosgi.distribution.handler;
 
 import java.util.Dictionary;
 
@@ -30,6 +30,8 @@ import junit.framework.TestCase;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.dosgi.distribution.handler.HttpServiceManager;
+import org.apache.cxf.dosgi.dsw.handlers.LocalHostUtil;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.easymock.IMocksControl;

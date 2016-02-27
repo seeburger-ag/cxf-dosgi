@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.cxf.dosgi.dsw.handlers;
+package org.apache.cxf.dosgi.distribution.handler;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.dosgi.dsw.handlers.LocalHostUtil;
 import org.apache.cxf.transport.http.DestinationRegistry;
 import org.apache.cxf.transport.http.DestinationRegistryImpl;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
@@ -138,7 +139,7 @@ public class HttpServiceManager {
         return "/" + type.getName().replace('.', '/');
     }
 
-    protected String getAbsoluteAddress(String contextRoot, String relativeEndpointAddress) {
+    public String getAbsoluteAddress(String contextRoot, String relativeEndpointAddress) {
         if (relativeEndpointAddress.startsWith("http")) {
             return relativeEndpointAddress;
         }

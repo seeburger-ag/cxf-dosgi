@@ -41,5 +41,6 @@
     <modules>
       <module>cxf-dsw</module>
       <module>cxf-topology-manager</module>
+      <module>cxf-distribution-providers</module>
     </modules>
 </project>

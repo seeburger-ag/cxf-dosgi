@@ -24,9 +24,12 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IntentTracker extends ServiceTracker {
 
+    private static final Logger LOG = LoggerFactory.getLogger(IntentTracker.class);
     private final IntentMap intentMap;
 
     public IntentTracker(BundleContext context, IntentMap intentMap) {
@@ -46,7 +49,7 @@ public class IntentTracker extends ServiceTracker {
     public Object addingService(ServiceReference reference) {
         String intentName = (String) reference.getProperty(Constants.INTENT_NAME_PROP);
         Object intent = super.addingService(reference);
-        IntentManagerImpl.LOG.info("Adding custom intent " + intentName);
+        LOG.info("Adding custom intent " + intentName);
         intentMap.put(intentName, intent);
         return intent;
     }

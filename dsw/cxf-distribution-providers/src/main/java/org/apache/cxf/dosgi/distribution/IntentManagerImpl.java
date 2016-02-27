@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.cxf.dosgi.dsw.qos;
+package org.apache.cxf.dosgi.distribution;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.cxf.binding.BindingConfiguration;
+import org.apache.cxf.dosgi.dsw.qos.IntentMap;
+import org.apache.cxf.dosgi.dsw.qos.IntentUnsatisfiedException;
+import org.apache.cxf.dosgi.dsw.qos.IntentUtils;
 import org.apache.cxf.endpoint.AbstractEndpointFactory;
 import org.apache.cxf.feature.Feature;
 import org.slf4j.Logger;

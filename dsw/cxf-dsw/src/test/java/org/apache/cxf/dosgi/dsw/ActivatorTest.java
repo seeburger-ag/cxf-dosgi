@@ -57,6 +57,7 @@ public class ActivatorTest extends TestCase {
 
         control.replay();
         Activator a = new Activator();
+        Activator.registrationDelay = 0L;
         a.start(bc);
         control.verify();
     }

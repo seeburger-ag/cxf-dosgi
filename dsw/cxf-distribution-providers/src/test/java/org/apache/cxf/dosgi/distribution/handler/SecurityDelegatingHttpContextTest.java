@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.cxf.dosgi.dsw.handlers;
+package org.apache.cxf.dosgi.distribution.handler;
 
 import java.io.PrintWriter;
 import java.net.URL;
@@ -30,13 +30,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.TestCase;
-
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpContext;
+
+import junit.framework.TestCase;
 
 public class SecurityDelegatingHttpContextTest extends TestCase {
 

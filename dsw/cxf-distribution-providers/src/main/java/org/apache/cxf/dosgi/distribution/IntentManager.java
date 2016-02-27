@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.cxf.dosgi.dsw.qos;
+package org.apache.cxf.dosgi.distribution;
 
 import java.util.List;
 import java.util.Map;

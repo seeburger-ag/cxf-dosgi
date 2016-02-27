@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.cxf.dosgi.dsw.handlers;
+package org.apache.cxf.dosgi.distribution.handler;
 
 import java.io.Closeable;
 import java.util.Arrays;
@@ -26,16 +26,14 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
+import org.apache.cxf.dosgi.distribution.IntentManager;
+import org.apache.cxf.dosgi.distribution.IntentManagerImpl;
 import org.apache.cxf.dosgi.dsw.Constants;
+import org.apache.cxf.dosgi.dsw.handlers.ExportResult;
 import org.apache.cxf.dosgi.dsw.handlers.jaxws.MyJaxWsEchoService;
 import org.apache.cxf.dosgi.dsw.handlers.jaxws.MyJaxWsEchoServiceImpl;
 import org.apache.cxf.dosgi.dsw.handlers.simple.MySimpleEchoService;
 import org.apache.cxf.dosgi.dsw.handlers.simple.MySimpleEchoServiceImpl;
-import org.apache.cxf.dosgi.dsw.qos.IntentManager;
-import org.apache.cxf.dosgi.dsw.qos.IntentManagerImpl;
 import org.apache.cxf.dosgi.dsw.qos.IntentMap;
 import org.apache.cxf.endpoint.AbstractEndpointFactory;
 import org.apache.cxf.endpoint.Endpoint;
@@ -56,6 +54,9 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.remoteserviceadmin.EndpointDescription;
 import org.osgi.service.remoteserviceadmin.RemoteConstants;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 public class PojoConfigurationTypeHandlerTest extends TestCase {
 

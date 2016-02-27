@@ -16,13 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.cxf.dosgi.dsw.handlers;
+package org.apache.cxf.dosgi.distribution.handler;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.apache.cxf.dosgi.dsw.Constants;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
@@ -32,6 +30,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.remoteserviceadmin.RemoteConstants;
+
+import junit.framework.TestCase;
 
 public class JaxRSUtilsTest extends TestCase {
 

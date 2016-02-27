@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.cxf.dosgi.dsw.handlers;
+package org.apache.cxf.dosgi.distribution.handler;
 
 import java.net.URL;
 import java.util.List;
@@ -24,8 +24,9 @@ import java.util.Map;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.util.ProxyClassLoader;
+import org.apache.cxf.dosgi.distribution.IntentManager;
 import org.apache.cxf.dosgi.dsw.Constants;
-import org.apache.cxf.dosgi.dsw.qos.IntentManager;
+import org.apache.cxf.dosgi.dsw.handlers.ExportResult;
 import org.apache.cxf.dosgi.dsw.qos.IntentUnsatisfiedException;
 import org.apache.cxf.dosgi.dsw.util.OsgiUtils;
 import org.apache.cxf.endpoint.Server;
