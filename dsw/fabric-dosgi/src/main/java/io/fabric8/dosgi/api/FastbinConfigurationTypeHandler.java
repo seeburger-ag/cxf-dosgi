@@ -45,13 +45,17 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
      */
     public static final String CONFIG_NAME = "fastbin";
     /**
+     * the endpoint address of the exported service. If left empty a generated endpoint id will be used
+     */
+    public static final String ENDPOINT_ADDRESS = "fastbin.endpoint.address";
+    /**
      * the server address to connect to
      */
     public static final String SERVER_ADDRESS = "fastbin.address";
     /**
-     * the endpoint address of the exported service. If left empty a generated endpoint id will be used
+     * the port to bind the server socket to. Defaults to 9000
      */
-    public static final String ENDPOINT_ADDRESS = "fastbin.endpoint.address";
+    public static final String PORT = "fastbin.port";
 
     private static final Logger LOG = LoggerFactory.getLogger(FastbinConfigurationTypeHandler.class);
 
@@ -70,12 +74,15 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
         this.bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
         this.queue = Dispatch.createQueue();
         this.serializationStrategies = new ConcurrentHashMap<String, SerializationStrategy>();
-        int port = Integer.parseInt(config.getOrDefault("fastbin", System.getProperty("fastbin.port","9000")).toString());
-        //TODO: bind host and public hostname from config
-
+        int port = Integer.parseInt(config.getOrDefault(PORT, System.getProperty(PORT,"9000")).toString());
+        String publicHost = (String)config.get(SERVER_ADDRESS);
         try {
-            String host = Inet4Address.getLocalHost().getCanonicalHostName();
-            server = new ServerInvokerImpl("tcp://"+host+":"+port, queue, serializationStrategies);
+            if(publicHost==null)
+            {
+                publicHost = Inet4Address.getLocalHost().getCanonicalHostName();
+                LOG.info("public server address (fastbin.address) not set. Using {} as default",publicHost);
+            }
+            server = new ServerInvokerImpl("tcp://"+publicHost+":"+port, queue, serializationStrategies);
             server.start();
             client = new ClientInvokerImpl(queue, serializationStrategies);
             client.start();
