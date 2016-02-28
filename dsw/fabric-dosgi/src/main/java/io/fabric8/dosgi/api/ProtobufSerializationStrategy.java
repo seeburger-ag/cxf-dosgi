@@ -122,6 +122,12 @@ public class ProtobufSerializationStrategy implements SerializationStrategy {
 
     }
 
+    @Override
+    public SerializationStrategy forProtocolVersion(int protocolVersion)
+    {
+        return INSTANCE;
+    }
+
 
 
 

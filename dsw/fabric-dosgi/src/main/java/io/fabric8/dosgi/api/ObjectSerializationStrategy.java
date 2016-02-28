@@ -15,12 +15,15 @@
  */
 package io.fabric8.dosgi.api;
 
-import io.fabric8.dosgi.util.ClassLoaderObjectInputStream;
-import org.fusesource.hawtbuf.DataByteArrayInputStream;
-import org.fusesource.hawtbuf.DataByteArrayOutputStream;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.text.MessageFormat;
+
+import org.fusesource.hawtbuf.DataByteArrayInputStream;
+import org.fusesource.hawtbuf.DataByteArrayOutputStream;
+import org.osgi.framework.ServiceException;
+
+import io.fabric8.dosgi.util.ClassLoaderObjectInputStream;
 
 /**
  * <p>
@@ -29,6 +32,9 @@ import java.io.ObjectOutputStream;
  */
 public class ObjectSerializationStrategy implements SerializationStrategy {
     public static final ObjectSerializationStrategy INSTANCE = new ObjectSerializationStrategy();
+    private static final ObjectSerializationStrategy V1 = INSTANCE;
+    private int protocolVersion = FastbinConfigurationTypeHandler.PROTOCOL_VERSION;
+
 
     public String name() {
         return "object";
@@ -62,6 +68,7 @@ public class ObjectSerializationStrategy implements SerializationStrategy {
     }
 
 
+
     public void encodeResponse(ClassLoader loader, Class<?> type, Object value, Throwable error, DataByteArrayOutputStream target) throws IOException, ClassNotFoundException {
         ObjectOutputStream oos = new ObjectOutputStream(target);
         oos.writeObject(error);
@@ -69,5 +76,18 @@ public class ObjectSerializationStrategy implements SerializationStrategy {
         oos.flush();
     }
 
+
+    @Override
+    public SerializationStrategy forProtocolVersion(int protocolVersion)
+    {
+        switch (protocolVersion)
+        {
+            case 1:
+                return V1;
+            default:
+                break;
+        }
+        throw new ServiceException(MessageFormat.format("Incorrect fastbin protocol {0} version. Only protocol versions up to {1} are supported.", protocolVersion,FastbinConfigurationTypeHandler.PROTOCOL_VERSION));
+    }
 
 }

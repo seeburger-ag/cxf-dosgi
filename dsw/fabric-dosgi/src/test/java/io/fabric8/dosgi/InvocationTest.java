@@ -68,7 +68,7 @@ public class InvocationTest {
             }, HelloImpl.class.getClassLoader());
 
 
-            InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader());
+            InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader(),FastbinConfigurationTypeHandler.PROTOCOL_VERSION);
             Hello hello  = (Hello) Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[] { Hello.class }, handler);
 
             assertEquals("Hello Fabric!", hello.hello("Fabric"));
@@ -123,7 +123,7 @@ public class InvocationTest {
     		}, HelloImpl.class.getClassLoader());
 
 
-    		InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader());
+    		InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader(),FastbinConfigurationTypeHandler.PROTOCOL_VERSION);
     		Hello hello  = (Hello) Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[] { Hello.class }, handler);
 
     		char[] chars = new char[65*1024];
@@ -173,7 +173,7 @@ public class InvocationTest {
     		}, HelloImpl.class.getClassLoader());
 
 
-    		InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader());
+    		InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader(),FastbinConfigurationTypeHandler.PROTOCOL_VERSION);
     		final Hello hello  = (Hello) Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[] { Hello.class }, handler);
 
             final AtomicInteger requests = new AtomicInteger(0);
@@ -242,7 +242,7 @@ public class InvocationTest {
     		}, HelloImpl.class.getClassLoader());
 
 
-    		InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader());
+    		InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader(),FastbinConfigurationTypeHandler.PROTOCOL_VERSION);
     		Hello hello  = (Hello) Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[] { Hello.class }, handler);
 
     		char[] chars = new char[65*1024];
@@ -279,7 +279,7 @@ public class InvocationTest {
             }, HelloImpl.class.getClassLoader());
 
 
-            InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader());
+            InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader(),FastbinConfigurationTypeHandler.PROTOCOL_VERSION);
 
             final Hello hello  = (Hello) Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[] { Hello.class }, handler);
 
@@ -434,7 +434,7 @@ public class InvocationTest {
             }, HelloImpl.class.getClassLoader());
 
 
-            InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader());
+            InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader(),FastbinConfigurationTypeHandler.PROTOCOL_VERSION);
 
             final Hello hello  = (Hello) Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[] { Hello.class }, handler);
 

@@ -55,6 +55,9 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
 
     private static final Logger LOG = LoggerFactory.getLogger(FastbinConfigurationTypeHandler.class);
 
+    public static final int PROTOCOL_VERSION = 1;
+    public static final String PROTOCOL_VERSION_PROPERTY = "fastbin.protocol.version";
+
 
     private ServerInvoker server;
     private ClientInvoker client;
@@ -125,7 +128,8 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
     public Object createProxy(ServiceReference serviceReference, BundleContext dswContext, BundleContext callingContext,
             Class<?> iClass, EndpointDescription endpoint) throws IntentUnsatisfiedException {
         String callID = (String) endpoint.getProperties().get(RemoteConstants.ENDPOINT_ID);
-        InvocationHandler invocationHandler = client.getProxy((String) endpoint.getProperties().get(SERVER_ADDRESS), callID, iClass.getClassLoader());
+        int protocolVersion = Integer.parseInt(endpoint.getProperties().getOrDefault(PROTOCOL_VERSION_PROPERTY,PROTOCOL_VERSION).toString());
+        InvocationHandler invocationHandler = client.getProxy((String) endpoint.getProperties().get(SERVER_ADDRESS), callID, iClass.getClassLoader(), protocolVersion);
         return Proxy.newProxyInstance(iClass.getClassLoader(), new Class[] {iClass},invocationHandler);
     }
 

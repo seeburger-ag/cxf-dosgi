@@ -19,14 +19,17 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.text.MessageFormat;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 import io.fabric8.dosgi.api.AsyncCallback;
+import io.fabric8.dosgi.api.FastbinConfigurationTypeHandler;
 import io.fabric8.dosgi.api.SerializationStrategy;
 import org.fusesource.hawtbuf.DataByteArrayInputStream;
 import org.fusesource.hawtbuf.DataByteArrayOutputStream;
 import org.fusesource.hawtdispatch.Dispatch;
+import org.osgi.framework.ServiceException;
 
 /**
  * <p>
@@ -77,10 +80,12 @@ public class BlockingInvocationStrategy implements InvocationStrategy {
         }
     }
 
-    public ResponseFuture request(SerializationStrategy serializationStrategy, ClassLoader loader, Method method, Object[] args, DataByteArrayOutputStream target) throws Exception {
+    public ResponseFuture request(SerializationStrategy serializationStrategy, ClassLoader loader, Method method, Object[] args, DataByteArrayOutputStream target, int protocolVersion) throws Exception {
 
         assert Dispatch.getCurrentQueue() == null : "You should not do blocking RPC class when executing on a dispatch queue";
-
+        // first see which version we should use
+        target.writeShort(protocolVersion);
+        serializationStrategy = serializationStrategy.forProtocolVersion(protocolVersion);
         serializationStrategy.encodeRequest(loader, method.getParameterTypes(), args, target);
         return new BlockingResponseFuture(loader, method, serializationStrategy);
     }
@@ -96,6 +101,8 @@ public class BlockingInvocationStrategy implements InvocationStrategy {
             try {
                 Class<?>[] types = method.getParameterTypes();
                 final Object[] args = new Object[types.length];
+                // first see which version the client requested
+                serializationStrategy = serializationStrategy.forProtocolVersion(checkVersion(requestStream));
                 serializationStrategy.decodeRequest(loader, types, requestStream, args);
                 value = method.invoke(target, args);
             } catch (Throwable t) {
@@ -121,6 +128,14 @@ public class BlockingInvocationStrategy implements InvocationStrategy {
         } finally {
             onComplete.run();
         }
+    }
+
+    private int checkVersion(DataByteArrayInputStream source)
+    {
+        int protocolVersion = source.readShort();
+        if(protocolVersion>FastbinConfigurationTypeHandler.PROTOCOL_VERSION)
+            throw new ServiceException(MessageFormat.format("Incorrect fastbin protocol {0} version. Only protocol versions up to {1} are supported.", protocolVersion,FastbinConfigurationTypeHandler.PROTOCOL_VERSION));
+        return protocolVersion;
     }
 
 }

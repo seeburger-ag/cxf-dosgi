@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.fabric8.dosgi.api.AsyncCallback;
 import io.fabric8.dosgi.api.AsyncCallbackFuture;
+import io.fabric8.dosgi.api.FastbinConfigurationTypeHandler;
 import io.fabric8.dosgi.api.ProtobufSerializationStrategy;
 import io.fabric8.dosgi.api.SerializationStrategy;
 import io.fabric8.dosgi.io.ServerInvoker;
@@ -65,7 +66,7 @@ public class TransportFailureTest {
             }, HelloImpl.class.getClassLoader());
 
 
-            InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader());
+            InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader(),FastbinConfigurationTypeHandler.PROTOCOL_VERSION);
             Hello hello  = (Hello) Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[]{Hello.class}, handler);
 
             AsyncCallbackFuture<String> future1 = new AsyncCallbackFuture<String>();

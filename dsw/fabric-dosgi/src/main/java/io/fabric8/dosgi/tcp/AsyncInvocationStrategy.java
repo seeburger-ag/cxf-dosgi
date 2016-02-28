@@ -19,17 +19,20 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.rmi.RemoteException;
+import java.text.MessageFormat;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.fabric8.dosgi.api.AsyncCallback;
+import io.fabric8.dosgi.api.FastbinConfigurationTypeHandler;
 import io.fabric8.dosgi.api.SerializationStrategy;
 import org.fusesource.hawtbuf.DataByteArrayInputStream;
 import org.fusesource.hawtbuf.DataByteArrayOutputStream;
 import org.fusesource.hawtdispatch.Dispatch;
 import org.fusesource.hawtdispatch.DispatchQueue;
+import org.osgi.framework.ServiceException;
 
 /**
  * <p>
@@ -93,7 +96,7 @@ public class AsyncInvocationStrategy implements InvocationStrategy {
         }
     }
 
-    public ResponseFuture request(SerializationStrategy serializationStrategy, ClassLoader loader, Method method, Object[] args, DataByteArrayOutputStream target) throws Exception {
+    public ResponseFuture request(SerializationStrategy serializationStrategy, ClassLoader loader, Method method, Object[] args, DataByteArrayOutputStream target, int protocolVersion) throws Exception {
         if(!isAsyncMethod(method)) {
             throw new IllegalArgumentException("Invalid async method declaration: last argument is not a RequestCallback");
         }
@@ -101,7 +104,9 @@ public class AsyncInvocationStrategy implements InvocationStrategy {
         Class[] new_types = payloadTypes(method);
         Object[] new_args = new Object[args.length-1];
         System.arraycopy(args, 0, new_args, 0, new_args.length);
-
+        // first see which version we should use
+        target.writeShort(protocolVersion);
+        serializationStrategy = serializationStrategy.forProtocolVersion(protocolVersion);
         serializationStrategy.encodeRequest(loader, new_types, new_args, target);
 
         return new AsyncResponseFuture(loader, method, (AsyncCallback) args[args.length-1], serializationStrategy, Dispatch.getCurrentQueue());
@@ -164,6 +169,8 @@ public class AsyncInvocationStrategy implements InvocationStrategy {
     }
     public void service(SerializationStrategy serializationStrategy, ClassLoader loader, Method method, Object target, DataByteArrayInputStream requestStream, final DataByteArrayOutputStream responseStream, final Runnable onComplete) {
 
+        // first see which version the client requested
+        serializationStrategy = serializationStrategy.forProtocolVersion(checkVersion(requestStream));
         final ServiceResponse helper = new ServiceResponse(loader, method, responseStream, onComplete, serializationStrategy);
         try {
 
@@ -183,6 +190,14 @@ public class AsyncInvocationStrategy implements InvocationStrategy {
             helper.send(t, null);
         }
 
+    }
+
+    private int checkVersion(DataByteArrayInputStream source)
+    {
+        int protocolVersion = source.readShort();
+        if(protocolVersion>FastbinConfigurationTypeHandler.PROTOCOL_VERSION)
+            throw new ServiceException(MessageFormat.format("Incorrect fastbin protocol {0} version. Only protocol versions up to {1} are supported.", protocolVersion,FastbinConfigurationTypeHandler.PROTOCOL_VERSION));
+        return protocolVersion;
     }
 
 }

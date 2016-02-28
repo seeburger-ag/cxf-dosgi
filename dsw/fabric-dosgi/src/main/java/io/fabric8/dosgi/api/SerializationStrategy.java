@@ -35,4 +35,6 @@ public interface SerializationStrategy {
 
     void encodeResponse(ClassLoader loader, Class<?> type, Object value, Throwable error, DataByteArrayOutputStream target) throws Exception;
 
+    SerializationStrategy forProtocolVersion(int protocolVersion);
+
 }

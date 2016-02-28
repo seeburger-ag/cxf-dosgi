@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 
+import org.apache.cxf.dosgi.dsw.handlers.ConfigTypeHandlerTracker;
 import org.fusesource.hawtdispatch.Dispatch;
 import org.fusesource.hawtdispatch.DispatchQueue;
 import org.junit.After;
@@ -24,6 +25,7 @@ import org.junit.Test;
 import org.osgi.framework.ServiceException;
 
 import io.fabric8.dosgi.InvocationTest.HelloImpl;
+import io.fabric8.dosgi.api.FastbinConfigurationTypeHandler;
 import io.fabric8.dosgi.api.SerializationStrategy;
 import io.fabric8.dosgi.io.ServerInvoker;
 import io.fabric8.dosgi.tcp.ClientInvokerImpl;
@@ -60,7 +62,7 @@ public class ExtraInvocationTest
             {}
         }, TestServiceImpl.class.getClassLoader());
 
-        InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", TestServiceImpl.class.getClassLoader());
+        InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", TestServiceImpl.class.getClassLoader(),FastbinConfigurationTypeHandler.PROTOCOL_VERSION);
         testService = (TestService)Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[]{TestService.class}, handler);
     }
 
@@ -83,6 +85,36 @@ public class ExtraInvocationTest
 
         // tests that the other way around works as well
         assertEquals("test2/test2/test2", testService.print(new ComplexObject("test2", 2)));
+
+    }
+
+    @Test
+    public void testInvokeWithWrongProtocolVersion() throws Exception
+    {
+        server.registerService("service-id", new ServerInvoker.ServiceFactory()
+        {
+            public Object get()
+            {
+                return new TestServiceImpl();
+            }
+
+
+            public void unget()
+            {}
+        }, TestServiceImpl.class.getClassLoader());
+
+        InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", TestServiceImpl.class.getClassLoader(),300);
+        testService = (TestService)Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[]{TestService.class}, handler);
+        try
+        {
+            testService.throwException("foo");
+            fail("must throw an exception because the client request is using an unsupported version");
+        }
+        catch (ServiceException e)
+        {
+            assertEquals("Incorrect fastbin protocol 300 version. Only protocol versions up to "+FastbinConfigurationTypeHandler.PROTOCOL_VERSION+" are supported.",e.getMessage());
+        }
+
 
     }
 

@@ -19,6 +19,6 @@ import java.lang.reflect.InvocationHandler;
 
 public interface ClientInvoker extends Service {
 
-    InvocationHandler getProxy(String address, String service, ClassLoader classLoader);
+    InvocationHandler getProxy(String address, String service, ClassLoader classLoader, int protocolVersion);
 
 }

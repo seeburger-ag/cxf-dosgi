@@ -127,8 +127,8 @@ public class ClientInvokerImpl implements ClientInvoker, Dispatched {
         }
     }
 
-    public InvocationHandler getProxy(String address, String service, ClassLoader classLoader) {
-        return new ProxyInvocationHandler(address, service, classLoader);
+    public InvocationHandler getProxy(String address, String service, ClassLoader classLoader, int protocolVersion) {
+        return new ProxyInvocationHandler(address, service, classLoader, protocolVersion);
     }
 
     protected void onCommand(TransportPool pool, Object data) {
@@ -242,7 +242,7 @@ public class ClientInvokerImpl implements ClientInvoker, Dispatched {
         MethodData methodData = getMethodData(method);
         writeBuffer(baos, methodData.signature);
 
-        final ResponseFuture future = methodData.invocationStrategy.request(methodData.serializationStrategy, classLoader, method, args, baos);
+        final ResponseFuture future = methodData.invocationStrategy.request(methodData.serializationStrategy.forProtocolVersion(handler.protocolVersion), classLoader, method, args, baos, handler.protocolVersion);
 
         // toBuffer() is better than toByteArray() since it avoids an
         // array copy.
@@ -283,15 +283,17 @@ public class ClientInvokerImpl implements ClientInvoker, Dispatched {
 
     protected class ProxyInvocationHandler implements InvocationHandler {
 
+        int protocolVersion;
         final String address;
         final UTF8Buffer service;
         final ClassLoader classLoader;
         int lastRequestSize = 250;
 
-        public ProxyInvocationHandler(String address, String service, ClassLoader classLoader) {
+        public ProxyInvocationHandler(String address, String service, ClassLoader classLoader, int protocolVersion) {
             this.address = address;
             this.service = new UTF8Buffer(service);
             this.classLoader = classLoader;
+            this.protocolVersion = protocolVersion;
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
