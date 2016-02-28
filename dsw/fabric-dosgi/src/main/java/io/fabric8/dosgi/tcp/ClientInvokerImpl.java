@@ -22,6 +22,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -298,9 +299,25 @@ public class ClientInvokerImpl implements ClientInvoker, Dispatched {
             {
                 return request(this, address, service, classLoader, method, args);
             }
-            catch (UndeclaredThrowableException e)
+            catch (Throwable e)
             {
-                throw new ServiceException(e.getCause().getMessage(), e.getCause());
+                if (e instanceof ExecutionException)
+                {
+                    ExecutionException executionException = (ExecutionException)e;
+                    e = executionException.getCause();
+                }
+                if (e instanceof RuntimeException)
+                {
+                    RuntimeException runtimeException = (RuntimeException)e;
+                    throw runtimeException;
+                }
+                Class< ? >[] exceptionTypes = method.getExceptionTypes();
+                for (Class< ? > exceptionType : exceptionTypes)
+                {
+                    if(exceptionType.isAssignableFrom(e.getClass()))
+                        throw e;
+                }
+                throw new ServiceException(e.getMessage(), e);
             }
         }
 
