@@ -158,7 +158,7 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
         props.put(RemoteConstants.ENDPOINT_FRAMEWORK_UUID, OsgiUtils.getUUID(bundleContext));
         props.put(RemoteConstants.SERVICE_IMPORTED_CONFIGS, importedConfigs);
         props.put(RemoteConstants.ENDPOINT_PACKAGE_VERSION_ + pkg, OsgiUtils.getVersion(iClass, bundleContext));
-
+        props.put(PROTOCOL_VERSION_PROPERTY, String.valueOf(PROTOCOL_VERSION));
 
         String[] allIntents = IntentUtils.mergeArrays(intents, IntentUtils.getIntentsImplementedByTheService(sd));
         props.put(RemoteConstants.SERVICE_INTENTS, allIntents);
