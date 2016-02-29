@@ -24,6 +24,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.remoteserviceadmin.ExportReference;
 import org.osgi.service.remoteserviceadmin.ExportRegistration;
 import org.osgi.service.remoteserviceadmin.ImportRegistration;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
@@ -72,16 +73,30 @@ public class EventProducer {
 
     // only one of ir or er must be set, and the other must be null
     private void notify(int type, ImportRegistration ir, ExportRegistration er) {
+        ExportReference eRef = getExportReference(er);
         try {
             RemoteServiceAdminEvent event = ir != null
                 ? new RemoteServiceAdminEvent(type, bctx.getBundle(), ir.getImportReference(), ir.getException())
-                : new RemoteServiceAdminEvent(type, bctx.getBundle(), er.getExportReference(), er.getException());
+                : new RemoteServiceAdminEvent(type, bctx.getBundle(), eRef, er.getException());
             notifyListeners(event);
             eaHelper.notifyEventAdmin(event);
         } catch (IllegalStateException ise) {
             LOG.debug("can't send notifications since bundle context is no longer valid");
         }
     }
+
+    private ExportReference getExportReference(ExportRegistration er) {
+        if (er == null) {
+            return null;
+        }
+        if (er instanceof ExportRegistrationImpl) {
+            //if the registration is closed we no longer get the reference otherwise
+            ExportRegistrationImpl impl = (ExportRegistrationImpl) er;
+            return impl.getExportReferenceAlways();
+        }
+        return er.getExportReference();
+    }
+
 
     private void notifyListeners(RemoteServiceAdminEvent rsae) {
         try {

@@ -82,6 +82,11 @@ public class ExportRegistrationImpl implements ExportRegistration {
         return closed ? null : exportReference;
     }
 
+
+    public ExportReference getExportReferenceAlways() {
+        return exportReference;
+    }
+
     public Throwable getException() {
         return closed ? null : exception;
     }
