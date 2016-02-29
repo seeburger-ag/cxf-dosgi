@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.net.Inet4Address;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +25,8 @@ import org.apache.felix.scr.annotations.Service;
 import org.fusesource.hawtdispatch.Dispatch;
 import org.fusesource.hawtdispatch.DispatchQueue;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.component.ComponentContext;
 import org.osgi.service.remoteserviceadmin.EndpointDescription;
 import org.osgi.service.remoteserviceadmin.RemoteConstants;
 import org.slf4j.Logger;
@@ -69,9 +71,17 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
     private ConcurrentHashMap<String, SerializationStrategy> serializationStrategies;
     private BundleContext bundleContext;
 
+    @SuppressWarnings("rawtypes")
     @Activate
-    public void activate(Map<String, Object> config) {
-        this.bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+    public void activate(ComponentContext context) {
+        this.bundleContext = context.getBundleContext();
+        Dictionary dictionary = context.getProperties();
+        Map<String, Object> config = new HashMap<String, Object>();
+        Enumeration keys = dictionary.keys();
+        while(keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            config.put((String)key, dictionary.get(key));
+        }
         this.queue = Dispatch.createQueue();
         this.serializationStrategies = new ConcurrentHashMap<String, SerializationStrategy>();
         int port = Integer.parseInt(config.getOrDefault(PORT, System.getProperty(PORT,"9000")).toString());
@@ -92,7 +102,7 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
     }
 
     @Deactivate
-    public void deactivate(Map<String, ?> config) {
+    public void deactivate(ComponentContext context) {
         server.stop();
         client.stop();
     }
@@ -111,7 +121,7 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
 
                 @Override
                 public void unget() {
-                    server.unregisterService(callID);
+
                 }
 
                 @Override
@@ -125,7 +135,7 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
 
                 @Override
                 public void close() throws IOException {
-                    factory.unget();
+                    server.unregisterService(callID);
                 }
             };
             return new ExportResult(endpointProps, closeable);
