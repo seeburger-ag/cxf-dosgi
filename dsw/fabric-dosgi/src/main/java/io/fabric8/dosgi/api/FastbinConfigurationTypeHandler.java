@@ -162,8 +162,8 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
 
         String[] allIntents = IntentUtils.mergeArrays(intents, IntentUtils.getIntentsImplementedByTheService(sd));
         props.put(RemoteConstants.SERVICE_INTENTS, allIntents);
-        String fabricAddress = server.getConnectAddress();
-        props.put(SERVER_ADDRESS, fabricAddress);
+        String fastbinAddress = server.getConnectAddress();
+        props.put(SERVER_ADDRESS, fastbinAddress);
         String endpointID = sd.getOrDefault(ENDPOINT_ADDRESS, UUID.randomUUID()).toString();
         props.put(RemoteConstants.ENDPOINT_ID, endpointID);
         return props;
