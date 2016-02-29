@@ -136,6 +136,8 @@ public class FastbinConfigurationTypeHandler implements ConfigurationTypeHandler
             Class<?> iClass, EndpointDescription endpoint) throws IntentUnsatisfiedException {
         String callID = (String) endpoint.getProperties().get(RemoteConstants.ENDPOINT_ID);
         int protocolVersion = Integer.parseInt(endpoint.getProperties().getOrDefault(PROTOCOL_VERSION_PROPERTY,PROTOCOL_VERSION).toString());
+        // use the highest version that is available on both server and client.
+        protocolVersion = Math.min(protocolVersion, PROTOCOL_VERSION);
         InvocationHandler invocationHandler = client.getProxy((String) endpoint.getProperties().get(SERVER_ADDRESS), callID, iClass.getClassLoader(), protocolVersion);
         return Proxy.newProxyInstance(iClass.getClassLoader(), new Class[] {iClass},invocationHandler);
     }
