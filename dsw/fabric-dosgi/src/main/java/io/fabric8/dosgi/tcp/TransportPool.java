@@ -25,13 +25,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.fusesource.hawtdispatch.DispatchQueue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.fabric8.dosgi.io.ProtocolCodec;
 import io.fabric8.dosgi.io.Service;
 import io.fabric8.dosgi.io.Transport;
 import io.fabric8.dosgi.io.TransportListener;
-import org.fusesource.hawtdispatch.DispatchQueue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class TransportPool implements Service {
 
@@ -250,7 +251,8 @@ public abstract class TransportPool implements Service {
         }
 
         public void onTransportDisconnected(Transport transport) {
-            onTransportFailure(transport, new IOException("Transport disconnected"));
+            TransportState state = transports.remove(transport);
+            transport.stop();
         }
     }
 }
