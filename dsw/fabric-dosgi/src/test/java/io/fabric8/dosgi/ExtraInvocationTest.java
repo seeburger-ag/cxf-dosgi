@@ -32,8 +32,8 @@ import org.junit.Test;
 import org.osgi.framework.ServiceException;
 
 import io.fabric8.dosgi.InvocationTest.HelloImpl;
-import io.fabric8.dosgi.api.FastbinConfigurationTypeHandler;
 import io.fabric8.dosgi.api.SerializationStrategy;
+import io.fabric8.dosgi.ecf.FastbinNamespace;
 import io.fabric8.dosgi.io.ServerInvoker;
 import io.fabric8.dosgi.tcp.ClientInvokerImpl;
 import io.fabric8.dosgi.tcp.ServerInvokerImpl;
@@ -69,7 +69,7 @@ public class ExtraInvocationTest
             {}
         }, TestServiceImpl.class.getClassLoader());
 
-        InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", TestServiceImpl.class.getClassLoader(),FastbinConfigurationTypeHandler.PROTOCOL_VERSION);
+        InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", TestServiceImpl.class.getClassLoader(),FastbinNamespace.PROTOCOL_VERSION);
         testService = (TestService)Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[]{TestService.class}, handler);
     }
 
@@ -119,7 +119,7 @@ public class ExtraInvocationTest
         }
         catch (ServiceException e)
         {
-            assertEquals("Incorrect fastbin protocol 300 version. Only protocol versions up to "+FastbinConfigurationTypeHandler.PROTOCOL_VERSION+" are supported.",e.getMessage());
+            assertEquals("Incorrect fastbin protocol 300 version. Only protocol versions up to "+FastbinNamespace.PROTOCOL_VERSION+" are supported.",e.getMessage());
         }
 
 

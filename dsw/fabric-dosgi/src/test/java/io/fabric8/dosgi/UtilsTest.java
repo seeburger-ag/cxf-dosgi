@@ -26,7 +26,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.Constants;
 import org.osgi.service.remoteserviceadmin.EndpointDescription;
 
-import io.fabric8.dosgi.api.FastbinConfigurationTypeHandler;
+import io.fabric8.dosgi.ecf.FastbinNamespace;
 import io.fabric8.dosgi.util.Utils;
 
 public class UtilsTest {
@@ -39,7 +39,7 @@ public class UtilsTest {
         props.put("protocols", new String[]{"foo", "bar"});
         props.put("ints", new int[]{1, 2, 3});
         props.put("endpoint.id", "identifier");
-        props.put("service.imported.configs", Collections.<Object>singletonList(FastbinConfigurationTypeHandler.CONFIG_NAME));
+        props.put("service.imported.configs", Collections.<Object>singletonList(FastbinNamespace.CONFIG_NAME));
         EndpointDescription endpoint1 = new EndpointDescription(props);
 
         String xml = Utils.getEndpointDescriptionXML(endpoint1);

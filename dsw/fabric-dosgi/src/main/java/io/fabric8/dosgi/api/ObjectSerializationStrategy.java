@@ -23,6 +23,7 @@ import org.fusesource.hawtbuf.DataByteArrayInputStream;
 import org.fusesource.hawtbuf.DataByteArrayOutputStream;
 import org.osgi.framework.ServiceException;
 
+import io.fabric8.dosgi.ecf.FastbinNamespace;
 import io.fabric8.dosgi.util.ClassLoaderObjectInputStream;
 
 /**
@@ -33,7 +34,7 @@ import io.fabric8.dosgi.util.ClassLoaderObjectInputStream;
 public class ObjectSerializationStrategy implements SerializationStrategy {
     public static final ObjectSerializationStrategy INSTANCE = new ObjectSerializationStrategy();
     private static final ObjectSerializationStrategy V1 = INSTANCE;
-    private int protocolVersion = FastbinConfigurationTypeHandler.PROTOCOL_VERSION;
+    private int protocolVersion = FastbinNamespace.PROTOCOL_VERSION;
 
 
     public String name() {
@@ -87,7 +88,7 @@ public class ObjectSerializationStrategy implements SerializationStrategy {
             default:
                 break;
         }
-        throw new ServiceException(MessageFormat.format("Incorrect fastbin protocol {0} version. Only protocol versions up to {1} are supported.", protocolVersion,FastbinConfigurationTypeHandler.PROTOCOL_VERSION));
+        throw new ServiceException(MessageFormat.format("Incorrect fastbin protocol {0} version. Only protocol versions up to {1} are supported.", protocolVersion,FastbinNamespace.PROTOCOL_VERSION));
     }
 
 }

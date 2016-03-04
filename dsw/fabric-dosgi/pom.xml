@@ -25,6 +25,7 @@
         <version>1.2.0.redhat-133</version>
     </parent>
 
+
     <artifactId>fabric-dosgi</artifactId>
     <packaging>bundle</packaging>
 
@@ -36,7 +37,6 @@
         </fuse.osgi.export>
         <fuse.osgi.import.before.defaults>
             !org.objectweb.asm,
-            !org.apache.zookeeper.server.quorum.flexible,
             org.eclipse.osgi*;resolution:=optional
         </fuse.osgi.import.before.defaults>
         <fuse.osgi.import.additional>
@@ -44,6 +44,7 @@
         <fuse.osgi.private.pkg>
             io.fabric8.dosgi*,
         </fuse.osgi.private.pkg>
+        <fuse.osgi.activator>io.fabric8.dosgi.api.Activator</fuse.osgi.activator>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -82,11 +83,6 @@
             <groupId>org.fusesource.hawtbuf</groupId>
             <artifactId>hawtbuf</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.cxf.dosgi</groupId>
-            <artifactId>cxf-dosgi-ri-dsw-cxf</artifactId>
-            <version>1.8-SNAPSHOT</version>
-        </dependency>
 
         <!-- this is only needed you you want to use the ProtobufSerializationStrategy -->
         <dependency>
@@ -117,6 +113,49 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
             <version>1.9.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>ecf</artifactId>
+            <version>3.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>identity</artifactId>
+                    <groupId>org.eclipse.ecf</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.ecf.remoteservice</groupId>
+            <artifactId>asyncproxy</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.equinox</groupId>
+            <artifactId>common</artifactId>
+            <version>3.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.equinox</groupId>
+            <artifactId>concurrent</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.ecf</groupId>
+            <artifactId>org.eclipse.ecf.remoteservice</artifactId>
+            <version>8.8.0.v20160114-0324</version>
+            <scope>system</scope>
+            <systemPath>${project.build.directory}/../org.eclipse.ecf.remoteservice_8.9.0.v20160304-0727.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.ecf</groupId>
+            <artifactId>org.eclipse.ecf.identity</artifactId>
+            <version>8.8.0.v20160114-0324</version>
+            <scope>system</scope>
+            <systemPath>${project.build.directory}/../org.eclipse.ecf.identity_3.7.0.v20160304-0727.jar</systemPath>
         </dependency>
     </dependencies>
 

@@ -15,9 +15,7 @@
  */
 package io.fabric8.dosgi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -26,17 +24,18 @@ import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-import io.fabric8.dosgi.api.AsyncCallback;
-import io.fabric8.dosgi.api.AsyncCallbackFuture;
-import io.fabric8.dosgi.api.FastbinConfigurationTypeHandler;
-import io.fabric8.dosgi.api.ProtobufSerializationStrategy;
-import io.fabric8.dosgi.api.SerializationStrategy;
-import io.fabric8.dosgi.io.ServerInvoker;
-import io.fabric8.dosgi.tcp.ClientInvokerImpl;
-import io.fabric8.dosgi.tcp.ServerInvokerImpl;
 import org.fusesource.hawtdispatch.Dispatch;
 import org.fusesource.hawtdispatch.DispatchQueue;
 import org.junit.Test;
+
+import io.fabric8.dosgi.api.AsyncCallback;
+import io.fabric8.dosgi.api.AsyncCallbackFuture;
+import io.fabric8.dosgi.api.ProtobufSerializationStrategy;
+import io.fabric8.dosgi.api.SerializationStrategy;
+import io.fabric8.dosgi.ecf.FastbinNamespace;
+import io.fabric8.dosgi.io.ServerInvoker;
+import io.fabric8.dosgi.tcp.ClientInvokerImpl;
+import io.fabric8.dosgi.tcp.ServerInvokerImpl;
 
 public class TransportFailureTest {
 
@@ -66,7 +65,7 @@ public class TransportFailureTest {
             }, HelloImpl.class.getClassLoader());
 
 
-            InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader(),FastbinConfigurationTypeHandler.PROTOCOL_VERSION);
+            InvocationHandler handler = client.getProxy(server.getConnectAddress(), "service-id", HelloImpl.class.getClassLoader(),FastbinNamespace.PROTOCOL_VERSION);
             Hello hello  = (Hello) Proxy.newProxyInstance(HelloImpl.class.getClassLoader(), new Class[]{Hello.class}, handler);
 
             AsyncCallbackFuture<String> future1 = new AsyncCallbackFuture<String>();

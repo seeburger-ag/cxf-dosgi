@@ -25,14 +25,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.fabric8.dosgi.api.AsyncCallback;
-import io.fabric8.dosgi.api.FastbinConfigurationTypeHandler;
-import io.fabric8.dosgi.api.SerializationStrategy;
 import org.fusesource.hawtbuf.DataByteArrayInputStream;
 import org.fusesource.hawtbuf.DataByteArrayOutputStream;
 import org.fusesource.hawtdispatch.Dispatch;
 import org.fusesource.hawtdispatch.DispatchQueue;
 import org.osgi.framework.ServiceException;
+
+import io.fabric8.dosgi.api.AsyncCallback;
+import io.fabric8.dosgi.api.SerializationStrategy;
+import io.fabric8.dosgi.ecf.FastbinNamespace;
 
 /**
  * <p>
@@ -195,8 +196,8 @@ public class AsyncInvocationStrategy implements InvocationStrategy {
     private int checkVersion(DataByteArrayInputStream source)
     {
         int protocolVersion = source.readShort();
-        if(protocolVersion>FastbinConfigurationTypeHandler.PROTOCOL_VERSION)
-            throw new ServiceException(MessageFormat.format("Incorrect fastbin protocol {0} version. Only protocol versions up to {1} are supported.", protocolVersion,FastbinConfigurationTypeHandler.PROTOCOL_VERSION));
+        if(protocolVersion>FastbinNamespace.PROTOCOL_VERSION)
+            throw new ServiceException(MessageFormat.format("Incorrect fastbin protocol {0} version. Only protocol versions up to {1} are supported.", protocolVersion,FastbinNamespace.PROTOCOL_VERSION));
         return protocolVersion;
     }
 
