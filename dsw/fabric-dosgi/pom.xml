@@ -49,6 +49,19 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
+    <repositories>
+        <repository>
+        <id>ecf</id>
+        <url>http://build.ecf-project.org/maven/3.13.0</url>
+        <releases>
+           <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+     </repository>
+    </repositories>
+
     <dependencies>
 
         <dependency>
@@ -146,16 +159,12 @@
         <dependency>
             <groupId>org.eclipse.ecf</groupId>
             <artifactId>org.eclipse.ecf.remoteservice</artifactId>
-            <version>8.8.0.v20160114-0324</version>
-            <scope>system</scope>
-            <systemPath>${project.build.directory}/../org.eclipse.ecf.remoteservice_8.9.0.v20160304-0727.jar</systemPath>
+            <version>8.9.0.v20160312-0656</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.ecf</groupId>
             <artifactId>org.eclipse.ecf.identity</artifactId>
-            <version>8.8.0.v20160114-0324</version>
-            <scope>system</scope>
-            <systemPath>${project.build.directory}/../org.eclipse.ecf.identity_3.7.0.v20160304-0727.jar</systemPath>
+            <version>3.7.0.v20160312-0656</version>
         </dependency>
     </dependencies>
 

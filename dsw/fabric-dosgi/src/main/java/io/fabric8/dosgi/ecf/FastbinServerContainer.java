@@ -15,7 +15,6 @@
  */
 package io.fabric8.dosgi.ecf;
 
-import java.net.Inet4Address;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,8 +57,10 @@ public class FastbinServerContainer extends AbstractRSAContainer
         super.dispose();
     }
 
-	@Override
-	protected Map<String, Object> registerEndpoint(final RSARemoteServiceRegistration registration) {
+
+    @Override
+    protected Map<String, Object> exportRemoteService(RSARemoteServiceRegistration registration)
+    {
         invoker.registerService(String.valueOf(registration.getID().getContainerRelativeID()), new ServerInvoker.ServiceFactory() {
             public Object get() {
                 return registration.getService();
@@ -76,12 +77,14 @@ public class FastbinServerContainer extends AbstractRSAContainer
         results.put(FastbinNamespace.SERVER_ADDRESS, fastbinAddress);
        // results.put("ecf.endpoint.id", "tcp://foobar.com:9999/fu/bar");
         return results;
-	}
+    }
 
-	@Override
-	protected void unregisterEndpoint(RSARemoteServiceRegistration registration) {
+    @Override
+    protected void unexportRemoteService(RSARemoteServiceRegistration registration)
+    {
         invoker.unregisterService(String.valueOf(registration.getID().getContainerRelativeID()));
-	}
+
+    }
 
 }
 

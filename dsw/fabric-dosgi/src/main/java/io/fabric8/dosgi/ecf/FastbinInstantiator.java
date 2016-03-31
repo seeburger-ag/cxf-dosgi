@@ -18,6 +18,9 @@ package io.fabric8.dosgi.ecf;
 import java.net.Inet4Address;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ecf.core.ContainerCreateException;
@@ -34,10 +37,17 @@ public class FastbinInstantiator extends RemoteServiceContainerInstantiator
     private static final Logger LOG = LoggerFactory.getLogger(FastbinInstantiator.class);
 
 	public FastbinInstantiator(String serverProvider, String clientProvider) {
-		super(serverProvider,clientProvider);
+		super(Collections.singletonList(serverProvider),asMap(serverProvider,clientProvider));
 	}
 
-	@Override
+	private static Map<String, List<String>> asMap(String serverProvider, String clientProvider)
+    {
+	    Map<String, List<String>> map = new HashMap<>();
+	    map.put(serverProvider, Collections.singletonList(clientProvider));
+        return map;
+    }
+
+    @Override
 	public IContainer createInstance(ContainerTypeDescription description, Map<String, ?> parameters)
 			throws ContainerCreateException {
 		return description.isServer()?
