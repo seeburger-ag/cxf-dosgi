@@ -27,7 +27,7 @@ public class FastbinNamespace extends URIID.URIIDNamespace
     /**
      * the name of the configuration type (service.exported.configs)
      */
-    public static final String CONFIG_NAME = "fastbin";
+    public static final String CONFIG_NAME = "ecf.hawt.server";
     /**
      * the endpoint address of the exported service. If left empty a generated endpoint id will be used
      */

@@ -48,15 +48,17 @@ public class FastbinInstantiator extends RemoteServiceContainerInstantiator
     }
 
     @Override
-	public IContainer createInstance(ContainerTypeDescription description, Map<String, ?> parameters)
-			throws ContainerCreateException {
-		return description.isServer()?
-				new FastbinServerContainer(getIDParameterValue(FastbinNamespace.INSTANCE, parameters, "id")):
-					new FastbinClientContainer(FastbinNamespace.INSTANCE.createInstance(new Object[] { URI.create("uuid:" + java.util.UUID.randomUUID().toString()) }));
-	}
+    public IContainer createInstance(ContainerTypeDescription description, Map<String, ?> parameters)
+            throws ContainerCreateException {
+        return description.isServer()?
+                new FastbinServerContainer(getIDParameterValue(FastbinNamespace.INSTANCE, parameters, "id")):
+                    new FastbinClientContainer(FastbinNamespace.INSTANCE.createInstance(new Object[] { URI.create("uuid:" + java.util.UUID.randomUUID().toString()) }));
+    }
 
     private ID getIDParameterValue(FastbinNamespace iNSTANCE, Map<String, ? > parameters, String string)
     {
+        if(parameters==null)
+            return IDFactory.getDefault().createStringID("tcp://localhost:" + 9000);
         String portValue = parameters.get(FastbinNamespace.PORT) != null ? parameters.get(FastbinNamespace.PORT).toString() : System.getProperty(FastbinNamespace.PORT, "9000");
         int port = Integer.parseInt(portValue);
         String publicHost = (String)parameters.get(FastbinNamespace.SERVER_ADDRESS);

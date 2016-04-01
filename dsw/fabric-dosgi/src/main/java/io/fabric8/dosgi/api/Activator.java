@@ -15,6 +15,7 @@
  */
 package io.fabric8.dosgi.api;
 
+import org.eclipse.ecf.core.provider.IContainerInstantiator;
 import org.eclipse.ecf.remoteservice.provider.IRemoteServiceDistributionProvider;
 import org.eclipse.ecf.remoteservice.provider.RemoteServiceDistributionProvider;
 import org.osgi.framework.BundleActivator;
@@ -27,6 +28,9 @@ public class Activator implements BundleActivator {
 
 	private static BundleContext context;
 
+    public static final String CLIENT_PROVIDER_NAME = "ecf.hawt.client";
+    public static final String SERVER_PROVIDER_NAME = "ecf.hawt.server";
+
 	static BundleContext getContext() {
 		return context;
 	}
@@ -37,10 +41,16 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+
 		// Create and register the Namespace
 		context.registerService(org.eclipse.ecf.core.identity.Namespace.class.getName(), new FastbinNamespace(),  null);
-		context.registerService(IRemoteServiceDistributionProvider.class.getName(), new RemoteServiceDistributionProvider.Builder().setName(FastbinNamespace.CONFIG_NAME)
-		                        .setInstantiator(new FastbinInstantiator("ecf.fastbin.provider.dist.server", "ecf.fastbin.provider.dist.client")).build(),null);
+        IContainerInstantiator instantiator = new FastbinInstantiator(SERVER_PROVIDER_NAME, CLIENT_PROVIDER_NAME);
+        RemoteServiceDistributionProvider.Builder serverBuilder = new RemoteServiceDistributionProvider.Builder().setName(SERVER_PROVIDER_NAME).setServer(true).setHidden(false).setInstantiator(instantiator).setDescription("Fabric Hawt.io Server Provider");
+
+        context.registerService(IRemoteServiceDistributionProvider.class.getName(), serverBuilder.build(), null);
+
+        RemoteServiceDistributionProvider.Builder clientBuilder = new RemoteServiceDistributionProvider.Builder().setName(CLIENT_PROVIDER_NAME).setServer(false).setHidden(false).setInstantiator(instantiator).setDescription("Fabric Hawt.io Client Provider");
+		context.registerService(IRemoteServiceDistributionProvider.class.getName(), clientBuilder.build(), null);
 
 	}
 
