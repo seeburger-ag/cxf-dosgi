@@ -27,13 +27,14 @@ import org.eclipse.ecf.core.ContainerCreateException;
 import org.eclipse.ecf.core.ContainerTypeDescription;
 import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.core.identity.ID;
-import org.eclipse.ecf.core.identity.IDFactory;
 import org.eclipse.ecf.remoteservice.provider.RemoteServiceContainerInstantiator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FastbinInstantiator extends RemoteServiceContainerInstantiator
 {
+	public static final String DEFAULT_SERVER_ID = "tcp://localhost:9000";
+		
     private static final Logger LOG = LoggerFactory.getLogger(FastbinInstantiator.class);
 
 	public FastbinInstantiator(String serverProvider, String clientProvider) {
@@ -51,31 +52,33 @@ public class FastbinInstantiator extends RemoteServiceContainerInstantiator
     public IContainer createInstance(ContainerTypeDescription description, Map<String, ?> parameters)
             throws ContainerCreateException {
         return description.isServer()?
-                new FastbinServerContainer(getIDParameterValue(FastbinNamespace.INSTANCE, parameters, "id")):
+                new FastbinServerContainer(getServerIDFromParameters(parameters)):
                     new FastbinClientContainer(FastbinNamespace.INSTANCE.createInstance(new Object[] { URI.create("uuid:" + java.util.UUID.randomUUID().toString()) }));
     }
 
-    private ID getIDParameterValue(FastbinNamespace iNSTANCE, Map<String, ? > parameters, String string)
+    private ID getServerIDFromParameters(Map<String, ?> parameters)
     {
-        if(parameters==null)
-            return IDFactory.getDefault().createStringID("tcp://localhost:" + 9000);
-        String portValue = parameters.get(FastbinNamespace.PORT) != null ? parameters.get(FastbinNamespace.PORT).toString() : System.getProperty(FastbinNamespace.PORT, "9000");
-        int port = Integer.parseInt(portValue);
-        String publicHost = (String)parameters.get(FastbinNamespace.SERVER_ADDRESS);
-        if (publicHost == null)
-        {
-            try
+    	String idString = DEFAULT_SERVER_ID;
+    	if (parameters != null) {
+            String portValue = parameters.get(FastbinNamespace.PORT) != null ? parameters.get(FastbinNamespace.PORT).toString() : System.getProperty(FastbinNamespace.PORT, "9000");
+            int port = Integer.parseInt(portValue);
+            String publicHost = (String)parameters.get(FastbinNamespace.SERVER_ADDRESS);
+            if (publicHost == null)
             {
-                publicHost = Inet4Address.getLocalHost().getCanonicalHostName();
-                LOG.info("public server address (fastbin.address) not set. Using {} as default", publicHost);
+                try
+                {
+                    publicHost = Inet4Address.getLocalHost().getCanonicalHostName();
+                    LOG.info("public server address (fastbin.address) not set. Using {} as default", publicHost);
+                }
+                catch (UnknownHostException e)
+                {
+                    publicHost = "localhost";
+                    LOG.warn("Failed to resolve canoncial hostname. Reverting to localhost as server address. Try setting the "+FastbinNamespace.SERVER_ADDRESS+" property to explicitly set the public address of the server.",e);
+                }
             }
-            catch (UnknownHostException e)
-            {
-                publicHost = "localhost";
-                LOG.warn("Failed to resolve canoncial hostname. Reverting to localhost as server address. Try setting the "+FastbinNamespace.SERVER_ADDRESS+" property to explicitly set the public address of the server.",e);
-            }
-        }
-        return IDFactory.getDefault().createStringID("tcp://" + publicHost + ":" + port);
+    		idString = "tcp://"+publicHost+":"+port;
+    	}
+        return FastbinNamespace.INSTANCE.createInstance(new Object[] { idString });
     }
 }
 

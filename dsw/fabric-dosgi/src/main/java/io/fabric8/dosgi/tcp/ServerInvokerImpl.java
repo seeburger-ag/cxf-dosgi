@@ -95,7 +95,8 @@ public class ServerInvokerImpl implements ServerInvoker, Dispatched {
                     params[i] = decodeClass(parts[i+1]);
                 }
                 Method method = clazz.getMethod(name, params);
-
+                // set the method as accessible for subsequent invoke
+                method.setAccessible(true);
 
                 Serialization annotation = method.getAnnotation(Serialization.class);
                 SerializationStrategy serializationStrategy;
